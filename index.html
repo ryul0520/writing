@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>영어 본문 완벽 암기 앱 (21문장)</title>
+  <title>영어 본문 관리 & 암기 프로그램</title>
   <style>
     :root {
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
       --success: #16a34a;
       --danger: #dc2626;
-      --bg: #f1f5f9;
+      --warning: #d97706;
+      --bg: #f8fafc;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -18,17 +19,25 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
-    .container { max-width: 760px; width: 100%; }
+    .container { max-width: 820px; width: 100%; }
 
-    header { text-align: center; margin-bottom: 16px; }
-    h1 { font-size: 1.25rem; color: var(--primary); margin-bottom: 4px; }
-    p.sub { font-size: 0.85rem; color: var(--muted); }
+    header { text-align: center; margin-bottom: 12px; }
+    h1 { font-size: 1.3rem; color: var(--primary); margin-bottom: 4px; }
 
-    /* Tabs */
-    .tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px; }
+    /* Realtime Stats Bar */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px;
+      padding: 10px; margin-bottom: 14px; text-align: center;
+    }
+    .stat-item .val { font-size: 1.25rem; font-weight: 800; color: var(--primary); }
+    .stat-item .lbl { font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-top: 2px; }
+
+    /* Navigation Tabs */
+    .tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 14px; }
     .tab-btn {
       padding: 10px 2px; border: 1px solid var(--border); background: #fff;
-      border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700;
+      border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-weight: 700;
       color: var(--muted); transition: 0.2s;
     }
     .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
@@ -42,13 +51,6 @@
     .title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
     .section-title { font-size: 0.95rem; font-weight: bold; color: var(--primary); }
 
-    .tool-btn {
-      background: #f8fafc; border: 1px solid var(--border); color: var(--primary);
-      font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 6px; cursor: pointer;
-    }
-    .tool-btn:hover { background: #e0e7ff; }
-
-    /* Korean Translation Style */
     .kor-text {
       background: #f8fafc; border-left: 3px solid var(--primary);
       padding: 8px 12px; font-size: 0.9rem; color: #334155; margin-bottom: 12px; line-height: 1.4;
@@ -57,24 +59,26 @@
     /* Inputs & Buttons */
     input[type="text"], textarea {
       width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
-      padding: 10px 12px; font-size: 1rem; outline: none; transition: 0.2s;
+      padding: 10px 12px; font-size: 0.95rem; outline: none; transition: 0.2s;
     }
     input[type="text"]:focus, textarea:focus { border-color: var(--primary); }
-    textarea { resize: vertical; min-height: 90px; font-size: 1rem; line-height: 1.5; }
+    textarea { resize: vertical; min-height: 85px; font-size: 0.95rem; line-height: 1.5; }
 
     .btn-group { display: flex; gap: 8px; margin-top: 12px; }
     .btn {
       flex: 1; padding: 10px; border: none; border-radius: 8px;
-      font-size: 0.9rem; font-weight: bold; cursor: pointer;
+      font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.2s;
     }
     .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
     .btn-secondary { background: #e2e8f0; color: var(--text); }
+    .btn-danger { background: #fee2e2; color: var(--danger); border: 1px solid #fca5a5; }
 
     .feedback { margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem; display: none; line-height: 1.4; }
     .feedback.correct { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
     .feedback.wrong { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
-    /* Mode 1: Key Word Marathon */
+    /* Mode 1: Marathon */
     .marathon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     @media (max-width: 550px) { .marathon-grid { grid-template-columns: 1fr; } }
     .marathon-item {
@@ -86,14 +90,6 @@
     .m-input.correct { border-color: var(--success); background: #f0fdf4; color: var(--success); font-weight: bold; }
     .m-input.wrong { border-color: var(--danger); background: #fef2f2; }
 
-    /* Key Word Setting Editor */
-    #keyword-editor {
-      display: none; background: #f8fafc; border: 1.5px solid var(--primary);
-      border-radius: 10px; padding: 14px; margin-bottom: 16px;
-    }
-    .edit-item { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-size: 0.85rem; }
-    .edit-input { padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; }
-
     /* Mode 2: Cloze */
     .cloze-area { font-size: 1.05rem; line-height: 2.3; margin: 10px 0; }
     .cloze-blank {
@@ -103,52 +99,66 @@
     .cloze-blank.correct { border-bottom-color: var(--success); color: var(--success); }
     .cloze-blank.wrong { border-bottom-color: var(--danger); color: var(--danger); }
 
-    /* Key Word Bold Highlight Style */
-    .bold-keyword {
-      font-weight: 800;
-      color: #1e3a8a;
-      background-color: #fef08a;
-      padding: 1px 4px;
-      border-radius: 4px;
+    /* Mode 4 & 5: Word Badges & Highlights */
+    .word-badge {
+      display: inline-block; background: #e0e7ff; color: var(--primary);
+      font-size: 0.72rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; margin-left: 6px;
     }
+    .bold-keyword {
+      font-weight: 800; color: #1e3a8a; background-color: #fef08a; padding: 1px 4px; border-radius: 4px;
+    }
+
+    /* Mode 5: Sentence Editor */
+    .editor-card {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; margin-bottom: 12px; position: relative;
+    }
+    .editor-card .header-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .editor-label { font-size: 0.75rem; font-weight: bold; color: var(--muted); margin-bottom: 3px; display: block; }
+    .editor-input-group { margin-bottom: 8px; }
+    .editor-input-group:last-child { margin-bottom: 0; }
+    .btn-delete { background: none; border: none; color: var(--danger); font-size: 0.8rem; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <header>
-    <h1>⚡ 영어 본문 암기 트레이너 (총 21문장)</h1>
-    <p class="sub">핵심 단어 설정 • 순서 암기 • 통문장 영작</p>
+    <h1>⚡ 영어 본문 관리 & 완벽 암기 앱</h1>
   </header>
 
-  <!-- Tabs -->
+  <!-- 실시간 단어수 및 통계 대시보드 -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="val" id="stat-total-sentences">0</div>
+      <div class="lbl">총 문장 수</div>
+    </div>
+    <div class="stat-item">
+      <div class="val" id="stat-total-words">0</div>
+      <div class="lbl">총 단어 수 (Word Count)</div>
+    </div>
+    <div class="stat-item">
+      <div class="val" id="stat-avg-words">0</div>
+      <div class="lbl">문장당 평균 단어 수</div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="setTab('kw-marathon')">1. 핵심단어 순서(21개)</button>
-    <button class="tab-btn" onclick="setTab('cloze')">2. 빈칸 뚫기</button>
-    <button class="tab-btn" onclick="setTab('writing')">3. 통문장 쓰기</button>
-    <button class="tab-btn" onclick="setTab('overview')">4. 전체 본문</button>
+    <button class="tab-btn active" onclick="setTab('kw-marathon')">1. 핵심단어</button>
+    <button class="tab-btn" onclick="setTab('cloze')">2. 빈칸뚫기</button>
+    <button class="tab-btn" onclick="setTab('writing')">3. 통문장쓰기</button>
+    <button class="tab-btn" onclick="setTab('overview')">4. 전체본문</button>
+    <button class="tab-btn" onclick="setTab('manage')">⚙️ 문장수정</button>
   </div>
 
   <!-- 1. Key Word Marathon -->
   <div id="tab-kw-marathon" class="tab-pane">
     <div class="card">
       <div class="title-row">
-        <span class="section-title">🏃‍♂️ 1번~21번 문장 핵심 단어 쓰기</span>
-        <button class="tool-btn" onclick="toggleKeywordEditor()">⚙️ 핵심 단어 직접 지정/수정</button>
+        <span class="section-title">🏃‍♂️ 문장별 핵심 단어 쓰기</span>
       </div>
-
-      <!-- Keyword Custom Editor Drawer -->
-      <div id="keyword-editor">
-        <div style="font-weight:bold; color:var(--primary); margin-bottom:8px;">✏️ 각 문장별 내가 외울 핵심 단어 설정</div>
-        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:12px;">원하는 단어/구문을 입력 후 [설정 저장]을 누르면 본문에서도 자동으로 볼드체 처리됩니다.</p>
-        <div id="editor-fields" style="max-height:300px; overflow-y:auto; padding-right:6px;"></div>
-        <div class="btn-group" style="margin-top:10px;">
-          <button class="btn btn-secondary" onclick="resetToDefaultKeywords()">기본값 복원</button>
-          <button class="btn btn-primary" onclick="saveCustomKeywords()">설정 저장 및 적용</button>
-        </div>
-      </div>
-
-      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">문맥 흐름을 기억하며 1번부터 21번까지 핵심 단어를 채우세요. (Enter를 누르면 다음 칸 이동)</p>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">지정한 핵심단어를 순서대로 입력하세요. (Enter 누르면 다음 칸 이동)</p>
       <div class="marathon-grid" id="marathon-list"></div>
       <div class="btn-group" style="margin-top:16px;">
         <button class="btn btn-secondary" onclick="resetMarathon()">초기화</button>
@@ -158,27 +168,28 @@
     </div>
   </div>
 
-  <!-- 2. Cloze Test (Shows Korean) -->
+  <!-- 2. Cloze Test -->
   <div id="tab-cloze" class="tab-pane" style="display:none;">
     <div class="card">
       <div class="title-row">
-        <span class="section-title" id="cloze-title">문장 빈칸 채우기 (1/21)</span>
+        <span class="section-title" id="cloze-title">문장 빈칸 채우기</span>
       </div>
       <div id="cloze-kor" class="kor-text"></div>
       <div class="cloze-area" id="cloze-content"></div>
       <div class="btn-group">
+        <button class="btn btn-secondary" onclick="prevCloze()">이전 문장</button>
         <button class="btn btn-secondary" onclick="showClozeAnswer()">정답 확인</button>
-        <button class="btn btn-primary" onclick="checkCloze()">채점 후 다음 문장</button>
+        <button class="btn btn-primary" onclick="checkCloze()">채점 후 다음</button>
       </div>
       <div id="cloze-feedback" class="feedback"></div>
     </div>
   </div>
 
-  <!-- 3. Sentence Writing (Blind Recall) -->
+  <!-- 3. Sentence Writing -->
   <div id="tab-writing" class="tab-pane" style="display:none;">
     <div class="card">
       <div class="title-row">
-        <span class="section-title" id="write-title">문장 1 / 21 통암기 쓰기</span>
+        <span class="section-title" id="write-title">통문장 쓰기</span>
       </div>
       <textarea id="write-input" placeholder="해당 번호의 문장 전체를 입력하세요..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkWriting();}"></textarea>
       <div class="btn-group">
@@ -190,98 +201,99 @@
     </div>
   </div>
 
-  <!-- 4. Overview (Shows Korean & Bold Key Words) -->
+  <!-- 4. Overview -->
   <div id="tab-overview" class="tab-pane" style="display:none;">
     <div class="card">
       <div class="title-row">
-        <span class="section-title">📖 전체 본문 (핵심단어 볼드체 강조)</span>
+        <span class="section-title">📖 전체 본문 및 단어수 분석</span>
       </div>
       <div id="overview-content"></div>
+    </div>
+  </div>
+
+  <!-- 5. Sentence Manager & Editor -->
+  <div id="tab-manage" class="tab-pane" style="display:none;">
+    <div class="card">
+      <div class="title-row">
+        <span class="section-title">⚙️ 문장 직접 수정 / 추가 / 삭제</span>
+        <button class="btn btn-secondary" style="flex:none; padding:6px 12px; font-size:0.75rem;" onclick="resetToFactoryDefault()">초기 원문으로 복원</button>
+      </div>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:14px;">영문, 한글 해석, 핵심 단어를 수정하면 상단 총 단어수와 모든 퀴즈에 즉시 반영됩니다.</p>
+      
+      <div id="editor-list"></div>
+
+      <div class="btn-group">
+        <button class="btn btn-secondary" onclick="addNewSentence()">+ 새 문장 추가</button>
+        <button class="btn btn-primary" onclick="saveAllEdits()">💾 수정사항 전체 저장</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// 21 Sentences (Sentence 6 is split into 6 and 7)
-const defaultKeywords = [
-  "useful",
-  "motion analysis",
-  "expensive machines",
-  "body parts",
-  "cheaper and easier",
-  "accuracy",
-  "improve",
-  "human pose estimation",
-  "shoulders, knees, and ankles",
-  "joint angles",
-  "biomechanics",
-  "smartphone camera",
-  "fast movements",
-  "hidden",
-  "improve the accuracy",
-  "movement data",
-  "body sensors",
-  "three-dimensional",
-  "hospitals, gyms, and homes",
-  "exercise safely",
-  "rehabilitation"
+// 초기 21문장 기본 데이터
+const defaultSentences = [
+  { id: 1, eng: "Recently, AI has become useful in sports and health care.", kor: "최근 AI는 스포츠와 건강 관리 분야에서 유용해졌습니다.", keyword: "useful" },
+  { id: 2, eng: "Many researchers are studying camera-based motion analysis.", kor: "많은 연구자들이 카메라 기반 동작 분석을 연구하고 있습니다.", keyword: "motion analysis" },
+  { id: 3, eng: "In the past, people used expensive machines to measure body movements.", kor: "과거에는 신체 움직임을 측정하기 위해 비싼 기계를 사용했습니다.", keyword: "expensive machines" },
+  { id: 4, eng: "Now, AI can find body parts in videos from simple cameras.", kor: "이제 AI는 단순한 카메라 영상에서 신체 부위를 찾을 수 있습니다.", keyword: "body parts" },
+  { id: 5, eng: "This technology is cheaper and easier to use.", kor: "이 기술은 더 저렴하고 사용하기 쉽습니다.", keyword: "cheaper and easier" },
+  { id: 6, eng: "However, AI still has problems with accuracy.", kor: "하지만 AI는 여전히 정확도에 문제가 있습니다.", keyword: "accuracy" },
+  { id: 7, eng: "So, researchers are trying to improve it.", kor: "그래서 연구자들은 이를 개선하기 위해 노력하고 있습니다.", keyword: "improve" },
+  { id: 8, eng: "AI uses a method called human pose estimation.", kor: "AI는 인간 자세 추정이라고 불리는 방법을 사용합니다.", keyword: "human pose estimation" },
+  { id: 9, eng: "It finds body parts such as the shoulders, knees, and ankles.", kor: "그것은 어깨, 무릎, 발목과 같은 신체 부위를 찾아냅니다.", keyword: "shoulders, knees, and ankles" },
+  { id: 10, eng: "Then, it can calculate joint angles and study body movements.", kor: "그런 다음 관절 각도를 계산하고 신체 움직임을 연구할 수 있습니다.", keyword: "joint angles" },
+  { id: 11, eng: "This technology is related to biomechanics, which studies movement and force.", kor: "이 기술은 움직임과 힘을 연구하는 생체역학과 관련이 있습니다.", keyword: "biomechanics" },
+  { id: 12, eng: "One advantage is that people can use a smartphone camera without special equipment.", kor: "한 가지 장점은 특별한 장비 없이 스마트폰 카메라를 사용할 수 있다는 점입니다.", keyword: "smartphone camera" },
+  { id: 13, eng: "However, camera angles and fast movements can affect the results.", kor: "하지만 카메라 각도와 빠른 움직임이 결과에 영향을 줄 수 있습니다.", keyword: "fast movements" },
+  { id: 14, eng: "AI may also make mistakes when a body part is hidden.", kor: "신체 부위가 가려졌을 때 AI가 실수를 할 수도 있습니다.", keyword: "hidden" },
+  { id: 15, eng: "In the future, researchers should improve the accuracy of AI motion analysis.", kor: "미래에는 연구자들이 AI 동작 분석의 정확도를 개선해야 합니다.", keyword: "improve the accuracy" },
+  { id: 16, eng: "They can use more cameras to collect better movement data.", kor: "그들은 더 나은 움직임 데이터를 수집하기 위해 더 많은 카메라를 사용할 수 있습니다.", keyword: "movement data" },
+  { id: 17, eng: "Another way is to combine cameras with body sensors.", kor: "또 다른 방법은 카메라와 신체 센서를 결합하는 것입니다.", keyword: "body sensors" },
+  { id: 18, eng: "These methods may help AI understand three-dimensional movement more accurately.", kor: "이러한 방법들은 AI가 3차원 움직임을 더 정확하게 이해하는 데 도움이 될 수 있습니다.", keyword: "three-dimensional" },
+  { id: 19, eng: "AI should also be tested in hospitals, gyms, and homes.", kor: "AI는 병원, 체육관, 가정에서도 테스트되어야 합니다.", keyword: "hospitals, gyms, and homes" },
+  { id: 20, eng: "I think this technology can help people exercise safely.", kor: "저는 이 기술이 사람들이 안전하게 운동하는 데 도움이 될 수 있다고 생각합니다.", keyword: "exercise safely" },
+  { id: 21, eng: "I hope it will make rehabilitation cheaper and easier for many people.", kor: "저는 이것이 많은 사람들에게 재활을 더 저렴하고 쉽게 만들어주길 바랍니다.", keyword: "rehabilitation" }
 ];
 
-const sentences = [
-  { id: 1, eng: "Recently, AI has become useful in sports and health care.", kor: "최근 AI는 스포츠와 건강 관리 분야에서 유용해졌습니다.", blanks: ["Recently", "useful", "sports", "health care"] },
-  { id: 2, eng: "Many researchers are studying camera-based motion analysis.", kor: "많은 연구자들이 카메라 기반 동작 분석을 연구하고 있습니다.", blanks: ["Many", "researchers", "camera-based", "motion analysis"] },
-  { id: 3, eng: "In the past, people used expensive machines to measure body movements.", kor: "과거에는 신체 움직임을 측정하기 위해 비싼 기계를 사용했습니다.", blanks: ["past", "expensive", "measure", "movements"] },
-  { id: 4, eng: "Now, AI can find body parts in videos from simple cameras.", kor: "이제 AI는 단순한 카메라 영상에서 신체 부위를 찾을 수 있습니다.", blanks: ["Now", "body parts", "videos", "simple"] },
-  { id: 5, eng: "This technology is cheaper and easier to use.", kor: "이 기술은 더 저렴하고 사용하기 쉽습니다.", blanks: ["technology", "cheaper", "easier"] },
-  { id: 6, eng: "However, AI still has problems with accuracy.", kor: "하지만 AI는 여전히 정확도에 문제가 있습니다.", blanks: ["However", "problems", "accuracy"] },
-  { id: 7, eng: "So, researchers are trying to improve it.", kor: "그래서 연구자들은 이를 개선하기 위해 노력하고 있습니다.", blanks: ["researchers", "trying", "improve"] },
-  { id: 8, eng: "AI uses a method called human pose estimation.", kor: "AI는 인간 자세 추정이라고 불리는 방법을 사용합니다.", blanks: ["method", "called", "human pose estimation"] },
-  { id: 9, eng: "It finds body parts such as the shoulders, knees, and ankles.", kor: "그것은 어깨, 무릎, 발목과 같은 신체 부위를 찾아냅니다.", blanks: ["finds", "shoulders", "knees", "ankles"] },
-  { id: 10, eng: "Then, it can calculate joint angles and study body movements.", kor: "그런 다음 관절 각도를 계산하고 신체 움직임을 연구할 수 있습니다.", blanks: ["Then", "calculate", "joint angles", "movements"] },
-  { id: 11, eng: "This technology is related to biomechanics, which studies movement and force.", kor: "이 기술은 움직임과 힘을 연구하는 생체역학과 관련이 있습니다.", blanks: ["related to", "biomechanics", "studies", "force"] },
-  { id: 12, eng: "One advantage is that people can use a smartphone camera without special equipment.", kor: "한 가지 장점은 특별한 장비 없이 스마트폰 카메라를 사용할 수 있다는 점입니다.", blanks: ["advantage", "smartphone", "without", "equipment"] },
-  { id: 13, eng: "However, camera angles and fast movements can affect the results.", kor: "하지만 카메라 각도와 빠른 움직임이 결과에 영향을 줄 수 있습니다.", blanks: ["However", "camera angles", "fast movements", "affect"] },
-  { id: 14, eng: "AI may also make mistakes when a body part is hidden.", kor: "신체 부위가 가려졌을 때 AI가 실수를 할 수도 있습니다.", blanks: ["make mistakes", "body part", "hidden"] },
-  { id: 15, eng: "In the future, researchers should improve the accuracy of AI motion analysis.", kor: "미래에는 연구자들이 AI 동작 분석의 정확도를 개선해야 합니다.", blanks: ["future", "improve", "accuracy", "motion analysis"] },
-  { id: 16, eng: "They can use more cameras to collect better movement data.", kor: "그들은 더 나은 움직임 데이터를 수집하기 위해 더 많은 카메라를 사용할 수 있습니다.", blanks: ["cameras", "collect", "movement data"] },
-  { id: 17, eng: "Another way is to combine cameras with body sensors.", kor: "또 다른 방법은 카메라와 신체 센서를 결합하는 것입니다.", blanks: ["Another way", "combine", "cameras", "sensors"] },
-  { id: 18, eng: "These methods may help AI understand three-dimensional movement more accurately.", kor: "이러한 방법들은 AI가 3차원 움직임을 더 정확하게 이해하는 데 도움이 될 수 있습니다.", blanks: ["understand", "three-dimensional", "more accurately"] },
-  { id: 19, eng: "AI should also be tested in hospitals, gyms, and homes.", kor: "AI는 병원, 체육관, 가정에서도 테스트되어야 합니다.", blanks: ["tested", "hospitals", "gyms", "homes"] },
-  { id: 20, eng: "I think this technology can help people exercise safely.", kor: "저는 이 기술이 사람들이 안전하게 운동하는 데 도움이 될 수 있다고 생각합니다.", blanks: ["think", "help", "exercise", "safely"] },
-  { id: 21, eng: "I hope it will make rehabilitation cheaper and easier for many people.", kor: "저는 이것이 많은 사람들에게 재활을 더 저렴하고 쉽게 만들어주길 바랍니다.", blanks: ["hope", "rehabilitation", "cheaper", "easier"] }
-];
-
-function getKeywords() {
-  const saved = localStorage.getItem("custom_keywords_ai_v21");
+// Load active sentences from LocalStorage
+function loadStoredSentences() {
+  const saved = localStorage.getItem("ai_memorize_sentences_v3");
   if (saved) {
-    try { 
+    try {
       const parsed = JSON.parse(saved);
-      if (parsed.length === 21) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     } catch(e){}
   }
-  return [...defaultKeywords];
+  return JSON.parse(JSON.stringify(defaultSentences));
 }
 
-let activeKeywords = getKeywords();
+let sentences = loadStoredSentences();
 let cIdx = { cloze: 0, write: 0 };
 
-function setTab(tabId) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
-  event.target.classList.add('active');
-  document.getElementById(`tab-${tabId}`).style.display = 'block';
+// Word Counting Utilities
+function countWords(str) {
+  if (!str) return 0;
+  return str.trim().split(/\s+/).filter(Boolean).length;
+}
 
-  if (tabId === 'kw-marathon') initMarathon();
-  if (tabId === 'cloze') loadCloze();
-  if (tabId === 'writing') loadWriting();
-  if (tabId === 'overview') loadOverview();
+function updateGlobalStats() {
+  const totalSentences = sentences.length;
+  let totalWords = 0;
+  sentences.forEach(s => {
+    totalWords += countWords(s.eng);
+  });
+  const avgWords = totalSentences > 0 ? (totalWords / totalSentences).toFixed(1) : 0;
+
+  document.getElementById('stat-total-sentences').innerText = `${totalSentences}문장`;
+  document.getElementById('stat-total-words').innerText = `${totalWords}단어`;
+  document.getElementById('stat-avg-words').innerText = `${avgWords}개`;
 }
 
 function cleanStr(str) {
   return (str || '').replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
 }
 
-// Helper to make selected keywords bold in sentences
 function makeBoldText(sentenceText, keyword) {
   if (!keyword || !keyword.trim()) return sentenceText;
   try {
@@ -293,18 +305,30 @@ function makeBoldText(sentenceText, keyword) {
   }
 }
 
+// Tab Switching
+function setTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+  event.target.classList.add('active');
+  document.getElementById(`tab-${tabId}`).style.display = 'block';
+
+  if (tabId === 'kw-marathon') initMarathon();
+  if (tabId === 'cloze') loadCloze();
+  if (tabId === 'writing') loadWriting();
+  if (tabId === 'overview') loadOverview();
+  if (tabId === 'manage') loadEditor();
+}
+
 /* 1. Keyword Marathon */
 function initMarathon() {
-  activeKeywords = getKeywords();
   const container = document.getElementById('marathon-list');
   container.innerHTML = '';
   sentences.forEach((s, idx) => {
-    const kw = activeKeywords[idx] || "";
     const item = document.createElement('div');
     item.className = 'marathon-item';
     item.innerHTML = `
-      <span class="m-num">(${s.id})</span>
-      <input type="text" class="m-input" id="minput-${idx}" data-ans="${kw}" placeholder="문장 ${s.id} 핵심단어" onkeydown="handleMKey(event, ${idx})" autocomplete="off" />
+      <span class="m-num">(${idx + 1})</span>
+      <input type="text" class="m-input" id="minput-${idx}" data-ans="${s.keyword || ''}" placeholder="문장 ${idx + 1} 핵심단어" onkeydown="handleMKey(event, ${idx})" autocomplete="off" />
     `;
     container.appendChild(item);
   });
@@ -333,8 +357,7 @@ function checkMarathon() {
   let score = 0;
   sentences.forEach((s, idx) => {
     const input = document.getElementById(`minput-${idx}`);
-    const expected = activeKeywords[idx] || "";
-    if (cleanStr(input.value) === cleanStr(expected) && input.value.trim() !== "") {
+    if (cleanStr(input.value) === cleanStr(s.keyword) && input.value.trim() !== "") {
       input.className = 'm-input correct';
       score++;
     } else {
@@ -342,72 +365,45 @@ function checkMarathon() {
     }
   });
   const res = document.getElementById('marathon-result');
-  res.className = `feedback ${score === 21 ? 'correct' : 'wrong'}`;
-  res.innerHTML = `결과: <b>${score} / 21</b> 개 일치! ${score === 21 ? '완벽합니다! 👏' : '빨간 칸의 핵심 단어를 다시 확인해보세요.'}`;
+  res.className = `feedback ${score === sentences.length ? 'correct' : 'wrong'}`;
+  res.innerHTML = `결과: <b>${score} / ${sentences.length}</b> 개 일치! ${score === sentences.length ? '완벽합니다! 👏' : '빨간 칸의 핵심 단어를 다시 확인해보세요.'}`;
   res.style.display = 'block';
 }
 
-function toggleKeywordEditor() {
-  const box = document.getElementById('keyword-editor');
-  if (box.style.display === 'block') {
-    box.style.display = 'none';
-  } else {
-    box.style.display = 'block';
-    renderEditorFields();
-  }
-}
-
-function renderEditorFields() {
-  const current = getKeywords();
-  const fields = document.getElementById('editor-fields');
-  fields.innerHTML = sentences.map((s, i) => {
-    const kw = current[i] || '';
-    const boldPreview = makeBoldText(s.eng, kw);
-    return `
-      <div class="edit-item">
-        <div><b>(${s.id})</b> <span style="color:#334155;">${boldPreview}</span></div>
-        <input type="text" class="edit-input" id="edit-kw-${i}" value="${kw}" placeholder="문장 ${s.id} 핵심단어 입력" />
-      </div>
-    `;
-  }).join('');
-}
-
-function saveCustomKeywords() {
-  const newKeywords = sentences.map((_, i) => {
-    const val = document.getElementById(`edit-kw-${i}`).value.trim();
-    return val || defaultKeywords[i];
-  });
-  localStorage.setItem("custom_keywords_ai_v21", JSON.stringify(newKeywords));
-  activeKeywords = newKeywords;
-  alert("핵심 단어 설정이 저장되었습니다!");
-  document.getElementById('keyword-editor').style.display = 'none';
-  initMarathon();
-}
-
-function resetToDefaultKeywords() {
-  if (confirm("기본 핵심 단어로 복원하시겠습니까?")) {
-    localStorage.removeItem("custom_keywords_ai_v21");
-    activeKeywords = [...defaultKeywords];
-    renderEditorFields();
-    initMarathon();
-  }
-}
-
-/* 2. Cloze */
+/* 2. Cloze Test */
 function loadCloze() {
+  if (sentences.length === 0) return;
+  cIdx.cloze = Math.min(cIdx.cloze, sentences.length - 1);
   const s = sentences[cIdx.cloze];
-  document.getElementById('cloze-title').innerText = `문장 빈칸 채우기 (${s.id}/21)`;
-  document.getElementById('cloze-kor').innerText = s.kor;
+  document.getElementById('cloze-title').innerText = `문장 빈칸 채우기 (${cIdx.cloze + 1}/${sentences.length})`;
+  document.getElementById('cloze-kor').innerText = s.kor || '(해석 없음)';
   document.getElementById('cloze-feedback').style.display = 'none';
 
   let txt = s.eng;
-  s.blanks.forEach(b => {
-    const r = new RegExp(`\\b${b}\\b`, 'gi');
-    txt = txt.replace(r, `<input type="text" class="cloze-blank" data-ans="${b}" style="width:${Math.max(b.length * 11, 55)}px" />`);
-  });
+  const kw = (s.keyword || '').trim();
+  if (kw) {
+    try {
+      const reg = new RegExp(`\\b${kw}\\b`, 'gi');
+      txt = txt.replace(reg, `<input type="text" class="cloze-blank" data-ans="${kw}" style="width:${Math.max(kw.length * 11, 60)}px" />`);
+    } catch(e){}
+  }
+  // If no keyword match, make first word blank
+  if (!txt.includes('cloze-blank')) {
+    const words = s.eng.split(' ');
+    const firstWord = words[0];
+    txt = `<input type="text" class="cloze-blank" data-ans="${firstWord}" style="width:${Math.max(firstWord.length * 11, 60)}px" /> ` + words.slice(1).join(' ');
+  }
+
   document.getElementById('cloze-content').innerHTML = txt;
   const first = document.querySelector('.cloze-blank');
   if (first) first.focus();
+}
+
+function prevCloze() {
+  if (cIdx.cloze > 0) {
+    cIdx.cloze--;
+    loadCloze();
+  }
 }
 
 function checkCloze() {
@@ -443,10 +439,12 @@ function showClozeAnswer() {
   });
 }
 
-/* 3. Writing (Blind Recall) */
+/* 3. Sentence Writing */
 function loadWriting() {
+  if (sentences.length === 0) return;
+  cIdx.write = Math.min(cIdx.write, sentences.length - 1);
   const s = sentences[cIdx.write];
-  document.getElementById('write-title').innerText = `문장 ${s.id} / 21 통암기 쓰기`;
+  document.getElementById('write-title').innerText = `문장 ${cIdx.write + 1} / ${sentences.length} 통암기 쓰기`;
   document.getElementById('write-feedback').style.display = 'none';
   document.getElementById('write-input').value = '';
   document.getElementById('write-input').focus();
@@ -484,23 +482,100 @@ function showWriteAnswer() {
   document.getElementById('write-input').value = s.eng;
 }
 
-/* 4. Overview (Bold Key Words + Korean) */
+/* 4. Overview */
 function loadOverview() {
-  activeKeywords = getKeywords();
   const box = document.getElementById('overview-content');
   box.innerHTML = sentences.map((s, idx) => {
-    const kw = activeKeywords[idx] || "";
-    const boldSentence = makeBoldText(s.eng, kw);
+    const wordsNum = countWords(s.eng);
+    const boldSentence = makeBoldText(s.eng, s.keyword);
     return `
       <div style="padding:10px 0; border-bottom:1px solid #e2e8f0; line-height:1.6;">
-        <div><b>(${s.id})</b> ${boldSentence}</div>
+        <div><b>(${idx + 1})</b> ${boldSentence} <span class="word-badge">${wordsNum} words</span></div>
         <div style="font-size:0.85rem; color:#64748b; margin-top:4px;">↳ ${s.kor}</div>
       </div>
     `;
   }).join('');
 }
 
-// Init
+/* 5. Sentence Manager & Editor */
+function loadEditor() {
+  const list = document.getElementById('editor-list');
+  list.innerHTML = sentences.map((s, idx) => `
+    <div class="editor-card" id="edit-row-${idx}">
+      <div class="header-line">
+        <span style="font-weight:bold; color:var(--primary);">문장 ${idx + 1} <span class="word-badge" id="row-wc-${idx}">${countWords(s.eng)} words</span></span>
+        <button class="btn-delete" onclick="deleteSentence(${idx})">🗑 삭제</button>
+      </div>
+      <div class="editor-input-group">
+        <label class="editor-label">영어 문장</label>
+        <input type="text" id="edit-eng-${idx}" value="${s.eng.replace(/"/g, '&quot;')}" oninput="updateRowWordCount(${idx})" />
+      </div>
+      <div class="editor-input-group">
+        <label class="editor-label">한글 해석</label>
+        <input type="text" id="edit-kor-${idx}" value="${(s.kor || '').replace(/"/g, '&quot;')}" />
+      </div>
+      <div class="editor-input-group">
+        <label class="editor-label">핵심 단어 (볼드체 강조 및 1번 탭 퀴즈용)</label>
+        <input type="text" id="edit-kw-${idx}" value="${(s.keyword || '').replace(/"/g, '&quot;')}" />
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateRowWordCount(idx) {
+  const val = document.getElementById(`edit-eng-${idx}`).value;
+  document.getElementById(`row-wc-${idx}`).innerText = `${countWords(val)} words`;
+}
+
+function addNewSentence() {
+  sentences.push({
+    id: sentences.length + 1,
+    eng: "New sentence text here.",
+    kor: "새로운 문장 해석을 입력하세요.",
+    keyword: "sentence"
+  });
+  loadEditor();
+  saveAllEdits(true);
+}
+
+function deleteSentence(idx) {
+  if (confirm(`문장 ${idx + 1}번을 삭제하시겠습니까?`)) {
+    sentences.splice(idx, 1);
+    loadEditor();
+    saveAllEdits(true);
+  }
+}
+
+function saveAllEdits(silent = false) {
+  const newSentences = [];
+  const rows = document.querySelectorAll('.editor-card');
+  rows.forEach((_, idx) => {
+    const eng = document.getElementById(`edit-eng-${idx}`).value.trim();
+    const kor = document.getElementById(`edit-kor-${idx}`).value.trim();
+    const keyword = document.getElementById(`edit-kw-${idx}`).value.trim();
+    if (eng) {
+      newSentences.push({ id: idx + 1, eng, kor, keyword });
+    }
+  });
+
+  sentences = newSentences;
+  localStorage.setItem("ai_memorize_sentences_v3", JSON.stringify(sentences));
+  updateGlobalStats();
+  if (!silent) alert("모든 수정사항이 성공적으로 저장되었습니다!");
+}
+
+function resetToFactoryDefault() {
+  if (confirm("초기 기본 21문장으로 모두 되돌리시겠습니까? (직접 수정한 내용은 초기화됩니다)")) {
+    localStorage.removeItem("ai_memorize_sentences_v3");
+    sentences = JSON.parse(JSON.stringify(defaultSentences));
+    updateGlobalStats();
+    loadEditor();
+    alert("기본 문장으로 복원되었습니다.");
+  }
+}
+
+// Init execution
+updateGlobalStats();
 initMarathon();
 </script>
 </body>
