@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>영어 본문 완벽 암기 앱</title>
+  <title>영어 본문 완벽 암기 앱 (21문장)</title>
   <style>
     :root {
       --primary: #2563eb;
@@ -117,13 +117,13 @@
 
 <div class="container">
   <header>
-    <h1>⚡ 영어 본문 암기 트레이너</h1>
+    <h1>⚡ 영어 본문 암기 트레이너 (총 21문장)</h1>
     <p class="sub">핵심 단어 설정 • 순서 암기 • 통문장 영작</p>
   </header>
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="setTab('kw-marathon')">1. 핵심단어 순서(20개)</button>
+    <button class="tab-btn active" onclick="setTab('kw-marathon')">1. 핵심단어 순서(21개)</button>
     <button class="tab-btn" onclick="setTab('cloze')">2. 빈칸 뚫기</button>
     <button class="tab-btn" onclick="setTab('writing')">3. 통문장 쓰기</button>
     <button class="tab-btn" onclick="setTab('overview')">4. 전체 본문</button>
@@ -133,7 +133,7 @@
   <div id="tab-kw-marathon" class="tab-pane">
     <div class="card">
       <div class="title-row">
-        <span class="section-title">🏃‍♂️ 1번~20번 문장 핵심 단어 쓰기</span>
+        <span class="section-title">🏃‍♂️ 1번~21번 문장 핵심 단어 쓰기</span>
         <button class="tool-btn" onclick="toggleKeywordEditor()">⚙️ 핵심 단어 직접 지정/수정</button>
       </div>
 
@@ -148,7 +148,7 @@
         </div>
       </div>
 
-      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">문맥 흐름을 기억하며 1번부터 20번까지 핵심 단어를 채우세요. (Enter를 누르면 다음 칸 이동)</p>
+      <p style="font-size:0.8rem; color:var(--muted); margin-bottom:12px;">문맥 흐름을 기억하며 1번부터 21번까지 핵심 단어를 채우세요. (Enter를 누르면 다음 칸 이동)</p>
       <div class="marathon-grid" id="marathon-list"></div>
       <div class="btn-group" style="margin-top:16px;">
         <button class="btn btn-secondary" onclick="resetMarathon()">초기화</button>
@@ -162,7 +162,7 @@
   <div id="tab-cloze" class="tab-pane" style="display:none;">
     <div class="card">
       <div class="title-row">
-        <span class="section-title" id="cloze-title">문장 빈칸 채우기 (1/20)</span>
+        <span class="section-title" id="cloze-title">문장 빈칸 채우기 (1/21)</span>
       </div>
       <div id="cloze-kor" class="kor-text"></div>
       <div class="cloze-area" id="cloze-content"></div>
@@ -178,7 +178,7 @@
   <div id="tab-writing" class="tab-pane" style="display:none;">
     <div class="card">
       <div class="title-row">
-        <span class="section-title" id="write-title">문장 1 / 20 통암기 쓰기</span>
+        <span class="section-title" id="write-title">문장 1 / 21 통암기 쓰기</span>
       </div>
       <textarea id="write-input" placeholder="해당 번호의 문장 전체를 입력하세요..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();checkWriting();}"></textarea>
       <div class="btn-group">
@@ -202,6 +202,7 @@
 </div>
 
 <script>
+// 21 Sentences (Sentence 6 is split into 6 and 7)
 const defaultKeywords = [
   "useful",
   "motion analysis",
@@ -209,6 +210,7 @@ const defaultKeywords = [
   "body parts",
   "cheaper and easier",
   "accuracy",
+  "improve",
   "human pose estimation",
   "shoulders, knees, and ankles",
   "joint angles",
@@ -231,27 +233,31 @@ const sentences = [
   { id: 3, eng: "In the past, people used expensive machines to measure body movements.", kor: "과거에는 신체 움직임을 측정하기 위해 비싼 기계를 사용했습니다.", blanks: ["past", "expensive", "measure", "movements"] },
   { id: 4, eng: "Now, AI can find body parts in videos from simple cameras.", kor: "이제 AI는 단순한 카메라 영상에서 신체 부위를 찾을 수 있습니다.", blanks: ["Now", "body parts", "videos", "simple"] },
   { id: 5, eng: "This technology is cheaper and easier to use.", kor: "이 기술은 더 저렴하고 사용하기 쉽습니다.", blanks: ["technology", "cheaper", "easier"] },
-  { id: 6, eng: "However, AI still has problems with accuracy, so researchers are trying to improve it.", kor: "하지만 AI는 여전히 정확도에 문제가 있어서 연구자들은 이를 개선하기 위해 노력하고 있습니다.", blanks: ["However", "accuracy", "researchers", "improve"] },
-  { id: 7, eng: "AI uses a method called human pose estimation.", kor: "AI는 인간 자세 추정이라고 불리는 방법을 사용합니다.", blanks: ["method", "called", "human pose estimation"] },
-  { id: 8, eng: "It finds body parts such as the shoulders, knees, and ankles.", kor: "그것은 어깨, 무릎, 발목과 같은 신체 부위를 찾아냅니다.", blanks: ["finds", "shoulders", "knees", "ankles"] },
-  { id: 9, eng: "Then, it can calculate joint angles and study body movements.", kor: "그런 다음 관절 각도를 계산하고 신체 움직임을 연구할 수 있습니다.", blanks: ["Then", "calculate", "joint angles", "movements"] },
-  { id: 10, eng: "This technology is related to biomechanics, which studies movement and force.", kor: "이 기술은 움직임과 힘을 연구하는 생체역학과 관련이 있습니다.", blanks: ["related to", "biomechanics", "studies", "force"] },
-  { id: 11, eng: "One advantage is that people can use a smartphone camera without special equipment.", kor: "한 가지 장점은 특별한 장비 없이 스마트폰 카메라를 사용할 수 있다는 점입니다.", blanks: ["advantage", "smartphone", "without", "equipment"] },
-  { id: 12, eng: "However, camera angles and fast movements can affect the results.", kor: "하지만 카메라 각도와 빠른 움직임이 결과에 영향을 줄 수 있습니다.", blanks: ["However", "camera angles", "fast movements", "affect"] },
-  { id: 13, eng: "AI may also make mistakes when a body part is hidden.", kor: "신체 부위가 가려졌을 때 AI가 실수를 할 수도 있습니다.", blanks: ["make mistakes", "body part", "hidden"] },
-  { id: 14, eng: "In the future, researchers should improve the accuracy of AI motion analysis.", kor: "미래에는 연구자들이 AI 동작 분석의 정확도를 개선해야 합니다.", blanks: ["future", "improve", "accuracy", "motion analysis"] },
-  { id: 15, eng: "They can use more cameras to collect better movement data.", kor: "그들은 더 나은 움직임 데이터를 수집하기 위해 더 많은 카메라를 사용할 수 있습니다.", blanks: ["cameras", "collect", "movement data"] },
-  { id: 16, eng: "Another way is to combine cameras with body sensors.", kor: "또 다른 방법은 카메라와 신체 센서를 결합하는 것입니다.", blanks: ["Another way", "combine", "cameras", "sensors"] },
-  { id: 17, eng: "These methods may help AI understand three-dimensional movement more accurately.", kor: "이러한 방법들은 AI가 3차원 움직임을 더 정확하게 이해하는 데 도움이 될 수 있습니다.", blanks: ["understand", "three-dimensional", "more accurately"] },
-  { id: 18, eng: "AI should also be tested in hospitals, gyms, and homes.", kor: "AI는 병원, 체육관, 가정에서도 테스트되어야 합니다.", blanks: ["tested", "hospitals", "gyms", "homes"] },
-  { id: 19, eng: "I think this technology can help people exercise safely.", kor: "저는 이 기술이 사람들이 안전하게 운동하는 데 도움이 될 수 있다고 생각합니다.", blanks: ["think", "help", "exercise", "safely"] },
-  { id: 20, eng: "I hope it will make rehabilitation cheaper and easier for many people.", kor: "저는 이것이 많은 사람들에게 재활을 더 저렴하고 쉽게 만들어주길 바랍니다.", blanks: ["hope", "rehabilitation", "cheaper", "easier"] }
+  { id: 6, eng: "However, AI still has problems with accuracy.", kor: "하지만 AI는 여전히 정확도에 문제가 있습니다.", blanks: ["However", "problems", "accuracy"] },
+  { id: 7, eng: "So, researchers are trying to improve it.", kor: "그래서 연구자들은 이를 개선하기 위해 노력하고 있습니다.", blanks: ["researchers", "trying", "improve"] },
+  { id: 8, eng: "AI uses a method called human pose estimation.", kor: "AI는 인간 자세 추정이라고 불리는 방법을 사용합니다.", blanks: ["method", "called", "human pose estimation"] },
+  { id: 9, eng: "It finds body parts such as the shoulders, knees, and ankles.", kor: "그것은 어깨, 무릎, 발목과 같은 신체 부위를 찾아냅니다.", blanks: ["finds", "shoulders", "knees", "ankles"] },
+  { id: 10, eng: "Then, it can calculate joint angles and study body movements.", kor: "그런 다음 관절 각도를 계산하고 신체 움직임을 연구할 수 있습니다.", blanks: ["Then", "calculate", "joint angles", "movements"] },
+  { id: 11, eng: "This technology is related to biomechanics, which studies movement and force.", kor: "이 기술은 움직임과 힘을 연구하는 생체역학과 관련이 있습니다.", blanks: ["related to", "biomechanics", "studies", "force"] },
+  { id: 12, eng: "One advantage is that people can use a smartphone camera without special equipment.", kor: "한 가지 장점은 특별한 장비 없이 스마트폰 카메라를 사용할 수 있다는 점입니다.", blanks: ["advantage", "smartphone", "without", "equipment"] },
+  { id: 13, eng: "However, camera angles and fast movements can affect the results.", kor: "하지만 카메라 각도와 빠른 움직임이 결과에 영향을 줄 수 있습니다.", blanks: ["However", "camera angles", "fast movements", "affect"] },
+  { id: 14, eng: "AI may also make mistakes when a body part is hidden.", kor: "신체 부위가 가려졌을 때 AI가 실수를 할 수도 있습니다.", blanks: ["make mistakes", "body part", "hidden"] },
+  { id: 15, eng: "In the future, researchers should improve the accuracy of AI motion analysis.", kor: "미래에는 연구자들이 AI 동작 분석의 정확도를 개선해야 합니다.", blanks: ["future", "improve", "accuracy", "motion analysis"] },
+  { id: 16, eng: "They can use more cameras to collect better movement data.", kor: "그들은 더 나은 움직임 데이터를 수집하기 위해 더 많은 카메라를 사용할 수 있습니다.", blanks: ["cameras", "collect", "movement data"] },
+  { id: 17, eng: "Another way is to combine cameras with body sensors.", kor: "또 다른 방법은 카메라와 신체 센서를 결합하는 것입니다.", blanks: ["Another way", "combine", "cameras", "sensors"] },
+  { id: 18, eng: "These methods may help AI understand three-dimensional movement more accurately.", kor: "이러한 방법들은 AI가 3차원 움직임을 더 정확하게 이해하는 데 도움이 될 수 있습니다.", blanks: ["understand", "three-dimensional", "more accurately"] },
+  { id: 19, eng: "AI should also be tested in hospitals, gyms, and homes.", kor: "AI는 병원, 체육관, 가정에서도 테스트되어야 합니다.", blanks: ["tested", "hospitals", "gyms", "homes"] },
+  { id: 20, eng: "I think this technology can help people exercise safely.", kor: "저는 이 기술이 사람들이 안전하게 운동하는 데 도움이 될 수 있다고 생각합니다.", blanks: ["think", "help", "exercise", "safely"] },
+  { id: 21, eng: "I hope it will make rehabilitation cheaper and easier for many people.", kor: "저는 이것이 많은 사람들에게 재활을 더 저렴하고 쉽게 만들어주길 바랍니다.", blanks: ["hope", "rehabilitation", "cheaper", "easier"] }
 ];
 
 function getKeywords() {
-  const saved = localStorage.getItem("custom_keywords_ai");
+  const saved = localStorage.getItem("custom_keywords_ai_v21");
   if (saved) {
-    try { return JSON.parse(saved); } catch(e){}
+    try { 
+      const parsed = JSON.parse(saved);
+      if (parsed.length === 21) return parsed;
+    } catch(e){}
   }
   return [...defaultKeywords];
 }
@@ -336,8 +342,8 @@ function checkMarathon() {
     }
   });
   const res = document.getElementById('marathon-result');
-  res.className = `feedback ${score === 20 ? 'correct' : 'wrong'}`;
-  res.innerHTML = `결과: <b>${score} / 20</b> 개 일치! ${score === 20 ? '완벽합니다! 👏' : '빨간 칸의 핵심 단어를 다시 확인해보세요.'}`;
+  res.className = `feedback ${score === 21 ? 'correct' : 'wrong'}`;
+  res.innerHTML = `결과: <b>${score} / 21</b> 개 일치! ${score === 21 ? '완벽합니다! 👏' : '빨간 칸의 핵심 단어를 다시 확인해보세요.'}`;
   res.style.display = 'block';
 }
 
@@ -371,7 +377,7 @@ function saveCustomKeywords() {
     const val = document.getElementById(`edit-kw-${i}`).value.trim();
     return val || defaultKeywords[i];
   });
-  localStorage.setItem("custom_keywords_ai", JSON.stringify(newKeywords));
+  localStorage.setItem("custom_keywords_ai_v21", JSON.stringify(newKeywords));
   activeKeywords = newKeywords;
   alert("핵심 단어 설정이 저장되었습니다!");
   document.getElementById('keyword-editor').style.display = 'none';
@@ -380,7 +386,7 @@ function saveCustomKeywords() {
 
 function resetToDefaultKeywords() {
   if (confirm("기본 핵심 단어로 복원하시겠습니까?")) {
-    localStorage.removeItem("custom_keywords_ai");
+    localStorage.removeItem("custom_keywords_ai_v21");
     activeKeywords = [...defaultKeywords];
     renderEditorFields();
     initMarathon();
@@ -390,7 +396,7 @@ function resetToDefaultKeywords() {
 /* 2. Cloze */
 function loadCloze() {
   const s = sentences[cIdx.cloze];
-  document.getElementById('cloze-title').innerText = `문장 빈칸 채우기 (${s.id}/20)`;
+  document.getElementById('cloze-title').innerText = `문장 빈칸 채우기 (${s.id}/21)`;
   document.getElementById('cloze-kor').innerText = s.kor;
   document.getElementById('cloze-feedback').style.display = 'none';
 
@@ -440,7 +446,7 @@ function showClozeAnswer() {
 /* 3. Writing (Blind Recall) */
 function loadWriting() {
   const s = sentences[cIdx.write];
-  document.getElementById('write-title').innerText = `문장 ${s.id} / 20 통암기 쓰기`;
+  document.getElementById('write-title').innerText = `문장 ${s.id} / 21 통암기 쓰기`;
   document.getElementById('write-feedback').style.display = 'none';
   document.getElementById('write-input').value = '';
   document.getElementById('write-input').focus();
